@@ -30,8 +30,6 @@ def main():
     num_font = pygame.font.SysFont("Helvetica", 30)
 
     placeMines()
-    # placeNumbers(num_font)
-    # showGrid()
     boardOverlay()
 
     while True:
@@ -44,7 +42,6 @@ def main():
                 x, y = pygame.mouse.get_pos()
                 r = getGridRect(x, y)
                 checkForMines(x, y, r, num_font)
-                # pygame.draw.rect(SCREEN, BLACK, r)
 
         pygame.display.update()
         CLOCK.tick(60)
@@ -59,19 +56,44 @@ def boardOverlay():
             pygame.draw.rect(SCREEN, BLACK, rect, 1)
 
 
+def isValidMove(x, y):
+    if x >= 0 and y >= 0:
+        try:
+            if realBoard[x][y] == "*":
+                return True
+        except IndexError:
+            return False
+        else:
+            return False
+    else:
+        return False
+
+
 def checkForMines(x, y, r, num_font):
     x = x//GRIDBOX_SIZE
     y = y//GRIDBOX_SIZE
-    if gameBoard[y][x] == "*":
+    count = 0
+    if gameBoard[x][y] == "*":
         print("Game Over")
-    try:
-        if realBoard[x][y-1] == "*":
-            print(x, y-1)
-    except IndexError:
-        pass
-    else:
+    elif gameBoard[x][y] != "*":
+        if isValidMove(x, y-1):
+            count = count + 1
+        if isValidMove(x, y+1):
+            count = count + 1
+        if isValidMove(x+1, y):
+            count = count + 1
+        if isValidMove(x-1, y):
+            count = count + 1
+        if isValidMove(x-1, y-1):
+            count = count + 1
+        if isValidMove(x+1, y+1):
+            count = count + 1
+        if isValidMove(x-1, y+1):
+            count = count + 1
+        if isValidMove(x+1, y-1):
+            count = count + 1
         pygame.draw.rect(SCREEN, WHITE, r)
-        n = num_font.render("1", True, BLACK)
+        n = num_font.render(str(count), True, BLACK)
         SCREEN.blit(n, r)
 
 
@@ -96,35 +118,5 @@ def getGridRect(x, y):
     return rect
 
 
-def showGrid():
-    for x in range(WINDOW_SIZE//GRIDBOX_SIZE):
-        for y in range(WINDOW_SIZE//GRIDBOX_SIZE):
-            rect = pygame.Rect(x*GRIDBOX_SIZE, y*GRIDBOX_SIZE,
-                               GRIDBOX_SIZE, GRIDBOX_SIZE)
-            pygame.draw.rect(SCREEN, BLACK, rect, 1)
-
-
 if __name__ == "__main__":
     main()
-
-
-# def placeNumbers(num_font):
-#     for x in range(ROWS+1):
-#         for y in range(COLS+1):
-#             # if realBoard[x-1][y-1] == "*":
-#             #     font = num_font.render("1", True, BLACK)
-#             #     rect = getGridRect(x*GRIDBOX_SIZE, y*GRIDBOX_SIZE)
-#             #     SCREEN.blit(font, (rect.x, rect.y))
-#             # if realBoard[x][y+1] == "*" or realBoard[x+1][y+1] == "*":
-#             #     f = num_font.render("1", True, BLACK)
-#             #     rect = getGridRect(x*GRIDBOX_SIZE, y*GRIDBOX_SIZE)
-#             #     SCREEN.blit(f, (rect.x, rect.y))
-#             try:
-#                 if realBoard[x][y+1] == "*":
-#                     f = num_font.render("1", True, BLACK)
-#                     rect = getGridRect(x*GRIDBOX_SIZE, y*GRIDBOX_SIZE)
-#                     SCREEN.blit(f, (rect.x, rect.y))
-#             except IndexError:
-#                 print(IndexError)
-#             else:
-#                 pass
