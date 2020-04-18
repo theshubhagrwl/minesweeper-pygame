@@ -98,7 +98,7 @@ def checkForMines(x, y, r, num_font):
             count = count + 1
         pygame.draw.rect(SCREEN, WHITE, r)
         n = num_font.render(str(count), True, BLACK)
-        SCREEN.blit(n, r)
+        SCREEN.blit(n, (r.x+10, r.y+4))
 
 
 def placeMines():
