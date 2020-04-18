@@ -1,6 +1,8 @@
 import pygame
 import sys
 import random
+from tkinter import *
+from tkinter import messagebox
 
 
 WINDOW_SIZE = 400
@@ -16,7 +18,9 @@ GREEN = (20, 200, 20)
 GRAY = (140, 140, 140)
 
 realBoard = [["-"]*COLS for i in range(ROWS)]
-gameBoard = [["-"]*COLS for i in range(ROWS)]
+
+mineImg = pygame.image.load("mine.png")
+explosionImg = pygame.image.load("explosion.png")
 
 
 def main():
@@ -73,9 +77,9 @@ def checkForMines(x, y, r, num_font):
     x = x//GRIDBOX_SIZE
     y = y//GRIDBOX_SIZE
     count = 0
-    if gameBoard[x][y] == "*":
-        print("Game Over")
-    elif gameBoard[x][y] != "*":
+    if realBoard[x][y] == "*":
+        showMines()
+    elif realBoard[x][y] != "*":
         if isValidMove(x, y-1):
             count = count + 1
         if isValidMove(x, y+1):
@@ -104,9 +108,29 @@ def placeMines():
         r = getGridRect(mine_x, mine_y)
         x = mine_x//GRIDBOX_SIZE
         y = mine_y//GRIDBOX_SIZE
-        realBoard[y][x] = "*"
-        gameBoard[y][x] = "*"
-        pygame.draw.rect(SCREEN, GREEN, r)
+        realBoard[x][y] = "*"
+
+
+def showMines():
+    for x in range(ROWS):
+        for y in range(COLS):
+            if realBoard[x][y] == "*":
+                r = pygame.Rect(x*GRIDBOX_SIZE, y*GRIDBOX_SIZE,
+                                GRIDBOX_SIZE, GRIDBOX_SIZE)
+                SCREEN.blit(mineImg, r)
+                SCREEN.blit(explosionImg, r)
+    pygame.display.update()
+    gameOver()
+
+
+def gameOver():
+    root = Tk().wm_withdraw()
+    MsgBox = messagebox.askquestion(
+        'OOPS YOU BLEW UP THE MINES!', 'Do you want to play again?', icon='question')
+    if MsgBox == 'yes':
+        main()
+    else:
+        sys.exit()
 
 
 def getGridRect(x, y):
