@@ -97,8 +97,11 @@ def checkForMines(x, y, r, num_font):
         if isValidMove(x+1, y-1):
             count = count + 1
         pygame.draw.rect(SCREEN, WHITE, r)
-        n = num_font.render(str(count), True, BLACK)
-        SCREEN.blit(n, (r.x+10, r.y+4))
+        if count == 0:
+            pass
+        else:
+            n = num_font.render(str(count), True, BLACK)
+            SCREEN.blit(n, (r.x+10, r.y+4))
 
 
 def placeMines():
@@ -118,8 +121,10 @@ def showMines():
                 r = pygame.Rect(x*GRIDBOX_SIZE, y*GRIDBOX_SIZE,
                                 GRIDBOX_SIZE, GRIDBOX_SIZE)
                 SCREEN.blit(mineImg, r)
+                pygame.display.update()
+                pygame.time.wait(100)
                 SCREEN.blit(explosionImg, r)
-    pygame.display.update()
+                pygame.display.update()
     gameOver()
 
 
