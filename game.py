@@ -17,7 +17,6 @@ BLACK = (0, 0, 0)
 GREEN = (20, 200, 20)
 GRAY = (140, 140, 140)
 
-realBoard = [["-"]*COLS for i in range(ROWS)]
 
 mineImg = pygame.image.load("mine.png")
 explosionImg = pygame.image.load("explosion.png")
@@ -31,9 +30,10 @@ def main():
     CLOCK = pygame.time.Clock()
     SCREEN.fill(WHITE)
 
+    realBoard = [["-"]*COLS for i in range(ROWS)]
     num_font = pygame.font.SysFont("Helvetica", 30)
 
-    placeMines()
+    placeMines(realBoard)
     boardOverlay()
 
     while True:
@@ -45,7 +45,7 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 r = getGridRect(x, y)
-                checkForMines(x, y, r, num_font)
+                checkForMines(x, y, r, num_font, realBoard)
 
         pygame.display.update()
         CLOCK.tick(60)
@@ -60,7 +60,7 @@ def boardOverlay():
             pygame.draw.rect(SCREEN, BLACK, rect, 1)
 
 
-def isValidMove(x, y):
+def isValidMove(x, y, realBoard):
     if x >= 0 and y >= 0:
         try:
             if realBoard[x][y] == "*":
@@ -73,28 +73,28 @@ def isValidMove(x, y):
         return False
 
 
-def checkForMines(x, y, r, num_font):
+def checkForMines(x, y, r, num_font, realBoard):
     x = x//GRIDBOX_SIZE
     y = y//GRIDBOX_SIZE
     count = 0
     if realBoard[x][y] == "*":
-        showMines()
+        showMines(realBoard)
     elif realBoard[x][y] != "*":
-        if isValidMove(x, y-1):
+        if isValidMove(x, y-1, realBoard):
             count = count + 1
-        if isValidMove(x, y+1):
+        if isValidMove(x, y+1, realBoard):
             count = count + 1
-        if isValidMove(x+1, y):
+        if isValidMove(x+1, y, realBoard):
             count = count + 1
-        if isValidMove(x-1, y):
+        if isValidMove(x-1, y, realBoard):
             count = count + 1
-        if isValidMove(x-1, y-1):
+        if isValidMove(x-1, y-1, realBoard):
             count = count + 1
-        if isValidMove(x+1, y+1):
+        if isValidMove(x+1, y+1, realBoard):
             count = count + 1
-        if isValidMove(x-1, y+1):
+        if isValidMove(x-1, y+1, realBoard):
             count = count + 1
-        if isValidMove(x+1, y-1):
+        if isValidMove(x+1, y-1, realBoard):
             count = count + 1
         pygame.draw.rect(SCREEN, WHITE, r)
         if count == 0:
@@ -104,7 +104,7 @@ def checkForMines(x, y, r, num_font):
             SCREEN.blit(n, (r.x+10, r.y+4))
 
 
-def placeMines():
+def placeMines(realBoard):
     for i in range(MINES+1):
         mine_x = random.randrange(40, WINDOW_SIZE)
         mine_y = random.randrange(40, WINDOW_SIZE)
@@ -114,7 +114,7 @@ def placeMines():
         realBoard[x][y] = "*"
 
 
-def showMines():
+def showMines(realBoard):
     for x in range(ROWS):
         for y in range(COLS):
             if realBoard[x][y] == "*":
